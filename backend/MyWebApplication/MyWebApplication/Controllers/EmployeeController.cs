@@ -156,7 +156,7 @@ namespace MyWebApplication.Controllers
                 var httpRequest = Request.Form;
                 var postedFile = httpRequest.Files[0];
                 string filename = postedFile.FileName;
-                var physicalPath = _webHostEnv + "/Photos/" + filename;
+                var physicalPath = _webHostEnv.ContentRootPath + "/Photos/" + filename;
 
                 using(var stream = new FileStream(physicalPath, FileMode.Create))
                     postedFile.CopyTo(stream);

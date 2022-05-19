@@ -5,6 +5,7 @@
 
 # Custom
 *.appsettings.json
+Photos/
 
 # User-specific files
 *.rsuser
