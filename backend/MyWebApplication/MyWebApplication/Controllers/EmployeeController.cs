@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
 using MyWebApplication.Models;
@@ -18,13 +17,12 @@ namespace MyWebApplication.Controllers
             _webHostEnv = webHostEnv;
         }
 
-
         [HttpGet]
         public JsonResult Get()
         {
             string query = @"
                             SELECT EmployeeId, EmployeeName, Department,
-                            CONVERT(VARCHAR(10), DateOfJoining, 120) as DateOfJoining, PhotoFileName
+                            convert(varchar(10), DateOfJoining, 120) AS DateOfJoining, PhotoFileName
                             FROM dbo.Employee
                             ";
 
@@ -52,9 +50,9 @@ namespace MyWebApplication.Controllers
         public JsonResult Post(Employee emp)
         {
             string query = @"
-                            INSERT INTO Employee
+                            INSERT INTO dbo.Employee
                             (EmployeeName, Department, DateOfJoining, PhotoFileName)
-                            VALUES ('@EmployeeName', '@Department', '@DateOfJoining', '@PhotoFileName')
+                            VALUES (@EmployeeName, @Department, @DateOfJoining, @PhotoFileName)
                             ";
 
             DataTable dt = new DataTable();
