@@ -1,34 +1,34 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
 using MyWebApplication.Models;
+using System.Net.Http.Headers;
 
 namespace MyWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DepartmentController : ControllerBase
+    public class CarPartController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public DepartmentController(IConfiguration configuration)
+        private readonly IWebHostEnvironment _webHostEnv;
+        public CarPartController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
-
 
         [HttpGet]
         public JsonResult Get()
         {
             string query = @"
-                            SELECT DepartmentId, DepartmentName
-                            FROM dbo.Department
+                            SELECT PartId, PartName, CarModel, PhotoFilePath
+                            FROM dbo.CarPart
                             ";
 
             DataTable dt = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("PlaygroundAppCon");
             SqlDataReader myReader;
-            
+
             using (SqlConnection myConnection = new SqlConnection(sqlDataSource))
             {
                 myConnection.Open();
@@ -46,11 +46,12 @@ namespace MyWebApplication.Controllers
         }
 
         [HttpPost]
-        public JsonResult Post(Department dep)
+        public JsonResult Post(CarPart part)
         {
             string query = @"
-                            INSERT INTO dbo.Department
-                            VALUES (@DepartmentName)
+                            INSERT INTO dbo.CarPart
+                            (PartName, CarModel, PhotoFilePath)
+                            VALUES (@PartName, @CarModel, @PhotoFilePath)
                             ";
 
             DataTable dt = new DataTable();
@@ -63,7 +64,9 @@ namespace MyWebApplication.Controllers
 
                 using (SqlCommand myCommand = new SqlCommand(query, myConnection))
                 {
-                    myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
+                    myCommand.Parameters.AddWithValue("@PartName", part.PartName);
+                    myCommand.Parameters.AddWithValue("@CarModel", part.CarModel);
+                    myCommand.Parameters.AddWithValue("@PhotoFilePath", part.PhotoFilePath);
                     myReader = myCommand.ExecuteReader();
                     dt.Load(myReader);
                     myReader.Close();
@@ -75,12 +78,14 @@ namespace MyWebApplication.Controllers
         }
 
         [HttpPut]
-        public JsonResult Put(Department dep)
+        public JsonResult Put(CarPart part)
         {
             string query = @"
-                            UPDATE dbo.Department
-                            SET DepartmentName=@DepartmentName
-                            WHERE DepartmentId=@DepartmentId
+                            UPDATE dbo.CarPart
+                            SET PartName=@PartName,
+                                CarModel=@CarModel,
+                                PhotoFilePath=@PhotoFilePath
+                            WHERE PartId=@PartId
                             ";
 
             DataTable dt = new DataTable();
@@ -93,8 +98,10 @@ namespace MyWebApplication.Controllers
 
                 using (SqlCommand myCommand = new SqlCommand(query, myConnection))
                 {
-                    myCommand.Parameters.AddWithValue("@DepartmentId", dep.DepartmentId);
-                    myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
+                    myCommand.Parameters.AddWithValue("@PartId", part.PartId);
+                    myCommand.Parameters.AddWithValue("@PartName", part.PartName);
+                    myCommand.Parameters.AddWithValue("@CarModel", part.CarModel);
+                    myCommand.Parameters.AddWithValue("@PhotoFilePath", part.PhotoFilePath);
                     myReader = myCommand.ExecuteReader();
                     dt.Load(myReader);
                     myReader.Close();
@@ -109,8 +116,8 @@ namespace MyWebApplication.Controllers
         public JsonResult Delete(int id)
         {
             string query = @"
-                            DELETE FROM dbo.Department
-                            WHERE DepartmentId=@DepartmentId
+                            DELETE FROM dbo.CarPart
+                            WHERE PartId=@PartId
                             ";
 
             DataTable dt = new DataTable();
@@ -123,7 +130,7 @@ namespace MyWebApplication.Controllers
 
                 using (SqlCommand myCommand = new SqlCommand(query, myConnection))
                 {
-                    myCommand.Parameters.AddWithValue("@DepartmentId", id);
+                    myCommand.Parameters.AddWithValue("@PartId", id);
                     myReader = myCommand.ExecuteReader();
                     dt.Load(myReader);
                     myReader.Close();
@@ -133,5 +140,6 @@ namespace MyWebApplication.Controllers
 
             return new JsonResult("Deleted successfully");
         }
+
     }
 }

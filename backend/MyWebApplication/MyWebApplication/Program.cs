@@ -25,7 +25,6 @@ builder.Services.AddControllersWithViews().AddNewtonsoftJson(x =>
             x.SerializerSettings.ReferenceLoopHandling=Newtonsoft.Json.ReferenceLoopHandling.Ignore)
             .AddNewtonsoftJson(x => x.SerializerSettings.ContractResolver = new DefaultContractResolver());
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
