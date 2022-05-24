@@ -11,8 +11,9 @@ export default class CarPart extends Component {
       PartId: 0,
       PartName: '',
       CarModel: '',
-      // PhotoFileName: 'anonymous.png',
-      PhotoFilePath: Variables.PHOTO_URL,
+      PhotoFormData: new FormData(),
+      PhotoFilePath: '',
+      PhotoDirectoryPath: Variables.PHOTO_URL
     };
   }
 
@@ -24,16 +25,9 @@ export default class CarPart extends Component {
       });
   }
 
-  componentDidMount() {
-    this.refreshList();
-  }
-
-  changePartName = (e) => {
-    this.setState({ PartName: e.target.value });
-  };
-  changeCarModel = (e) => {
-    this.setState({ CarModel: e.target.value });
-  };
+  componentDidMount() { this.refreshList(); }
+  changePartName = (e) => { this.setState({ PartName: e.target.value }); };
+  changeCarModel = (e) => { this.setState({ CarModel: e.target.value }); };
 
   addClick() {
     this.setState({
@@ -41,7 +35,7 @@ export default class CarPart extends Component {
       PartId: 0,
       PartName: '',
       CarModel: '',
-      PhotoFilePath: 'anonymous.png',
+      PhotoFilePath: '',
     });
   }
   editClick(part) {
@@ -55,6 +49,17 @@ export default class CarPart extends Component {
   }
 
   createClick() {
+    // Store the image in the file system
+    fetch(Variables.API_URL + 'carpart/savephoto', {
+      method: 'POST',
+      body: this.state.PhotoFormData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ PhotoFilePath: data });
+      });
+
+    // Create the Employee object
     fetch(Variables.API_URL + 'carpart', {
       method: 'POST',
       headers: {
@@ -73,10 +78,18 @@ export default class CarPart extends Component {
           alert(result);
           this.refreshList();
         },
-        (error) => {
-          alert('Failed');
+        (err) => {
+          alert(`Error:\n` + err);
         }
       );
+  }
+
+  imageUpload = (e) => {
+    e.preventDefault();
+
+    const tempData = new FormData();
+    tempData.append('file', e.target.files[0], e.target.files[0].name)
+    this.setState({ PhotoFormData: tempData });
   }
 
   updateClick() {
@@ -99,15 +112,15 @@ export default class CarPart extends Component {
           alert(result);
           this.refreshList();
         },
-        (error) => {
-          alert('Failed');
+        (err) => {
+          alert(`Error: ` + err);
         }
       );
   }
 
   deleteClick(id) {
     if (window.confirm('Are you sure?')) {
-      fetch(Variables.API_URL + 'part/' + id, {
+      fetch(Variables.API_URL + 'carpart/' + id, {
         method: 'DELETE',
         headers: {
           Accept: 'application/json',
@@ -120,28 +133,12 @@ export default class CarPart extends Component {
             alert(result);
             this.refreshList();
           },
-          (error) => {
-            alert('Failed');
+          (err) => {
+            alert(`Error:\n` + err);
           }
         );
     }
   }
-
-  imageUpload = (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append('file', e.target.files[0], e.target.files[0].name);
-
-    fetch(Variables.API_URL + 'part/savefile', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({ PhotoFilePath: data });
-      });
-  };
 
   render() {
     const {
@@ -150,7 +147,9 @@ export default class CarPart extends Component {
       PartId,
       PartName,
       CarModel,
-      PhotoFilePath
+      PhotoFormData,
+      PhotoFilePath,
+      PhotoDirectoryPath
     } = this.state;
 
     return (
@@ -241,7 +240,6 @@ export default class CarPart extends Component {
                   aria-label='Close'
                 ></button>
               </div>
-
               <div className='modal-body'>
                 <div className='d-flex flex-row bd-highlight mb-3'>
                   <div className='p-2 w-50 bd-highlight'>
@@ -254,11 +252,10 @@ export default class CarPart extends Component {
                         onChange={this.changePartName}
                       />
                     </div>
-                    
                     <div className='input-group mb-3'>
                       <span className='input-group-text'>CarModel</span>
                       <input
-                        type='date'
+                        type='text'
                         className='form-control'
                         value={CarModel}
                         onChange={this.changeCarModel}
@@ -269,7 +266,7 @@ export default class CarPart extends Component {
                     <img
                       width='250px'
                       height='250px'
-                      src={PhotoFilePath}
+                      src={PhotoDirectoryPath + PhotoFilePath}
                     />
                     <input
                       className='m-2'
@@ -278,8 +275,7 @@ export default class CarPart extends Component {
                     />
                   </div>
                 </div>
-
-                {PartId == 0 ? (
+                {PartId === 0 ? (
                   <button
                     type='button'
                     className='btn btn-primary float-start'
@@ -289,7 +285,7 @@ export default class CarPart extends Component {
                   </button>
                 ) : null}
 
-                {PartId != 0 ? (
+                {PartId !== 0 ? (
                   <button
                     type='button'
                     className='btn btn-primary float-start'

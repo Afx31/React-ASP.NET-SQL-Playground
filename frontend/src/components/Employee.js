@@ -14,7 +14,7 @@ export default class Employee extends Component {
       Department: '',
       DateOfJoining: '',
       PhotoFileName: 'anonymous.png',
-      PhotoPath: Variables.PHOTO_URL,
+      PhotoPath: Variables.PHOTO_URL
     };
   }
 
@@ -315,7 +315,7 @@ export default class Employee extends Component {
                   </div>
                 </div>
 
-                {EmployeeId == 0 ? (
+                {EmployeeId === 0 ? (
                   <button
                     type='button'
                     className='btn btn-primary float-start'
@@ -325,7 +325,7 @@ export default class Employee extends Component {
                   </button>
                 ) : null}
 
-                {EmployeeId != 0 ? (
+                {EmployeeId !== 0 ? (
                   <button
                     type='button'
                     className='btn btn-primary float-start'
