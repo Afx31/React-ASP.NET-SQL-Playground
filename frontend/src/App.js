@@ -6,7 +6,7 @@ import CarPart from './components/CarPart';
 // import PhotoUpload from './components/PhotoBinary/PhotoUpload';
 import { BrowserRouter, Route, Routes, NavLink } from 'react-router-dom';
 
-function App() {
+const App = () => {
   return (
     <BrowserRouter>
       <div className='App'>
