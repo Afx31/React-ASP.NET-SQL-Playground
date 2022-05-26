@@ -16,20 +16,33 @@ const CarPart = () => {
   const { parts, modalTitle, PartId, PartName, CarModel, PhotoFormData, PhotoFilePath } = formData;
 
   useEffect(() => {
-    async function refreshData() {
-      fetch(Variables.API_URL + 'carpart')
-        .then((res) => res.json())
-        .then((data) => {
-          setFormData({
-            ...formData,
-            parts: data
-          });
-        },
-        (err) => { alert(`Error: ` + err); }
-        );
-    }
+    // async function refreshData() {
+    //   fetch(Variables.API_URL + 'carpart')
+    //     .then((res) => res.json())
+    //     .then((data) => {
+    //       setFormData({
+    //         ...formData,
+    //         parts: data
+    //       });
+    //     },
+    //     (err) => { alert(`Error: ` + err); }
+    //     );
+    // }
     refreshData();
-  }, [])  
+  }, [])
+  
+  const refreshData = () => {
+    fetch(Variables.API_URL + 'carpart')
+      .then((res) => res.json())
+      .then((data) => {
+        setFormData({
+          ...formData,
+          parts: data
+        });
+      },
+      (err) => { alert(`Error: ` + err); }
+      );
+  }
 
   const changePartName = (e) => {
     setFormData({
