@@ -15,19 +15,6 @@ const Department = () => {
   const { departments, modalTitle, DepartmentName, DepartmentId, DepartmentIdFilter, DepartmentNameFilter, departmentsWithoutFilter } = formData;
 
   useEffect(() => {
-    // async function refreshData() {
-    //   fetch(Variables.API_URL + 'department')
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //       setFormData({
-    //         ...formData,
-    //         departments: data,
-    //         departmentsWithoutFilter: data
-    //       });
-    //     },
-    //     (err) => { alert(`Error: ` + err); }
-    //     );
-    // }
     refreshData();
   }, [])
 
@@ -87,7 +74,7 @@ const Department = () => {
       DepartmentIdFilter: e.target.value
     })
     FilterFn();
-  };
+  }
 
   const changeDepartmentNameFilter = (e) => {
     setFormData({
@@ -95,14 +82,14 @@ const Department = () => {
       DepartmentNameFilter: e.target.value
     })
     FilterFn();
-  };
+  }
 
   const changeDepartmentName = (e) => {
     setFormData({
       ...formData,
       DepartmentName: e.target.value
     })
-  };
+  }
 
   const addClick = () => {
     setFormData({
@@ -112,6 +99,7 @@ const Department = () => {
       DepartmentName: '',
     })
   }
+
   const editClick = (dep) => {
     setFormData({
       ...formData,
@@ -137,7 +125,7 @@ const Department = () => {
       .then(
         (result) => {
           alert(result);
-          // refreshList();
+          refreshData();
         },
         (error) => {
           alert(`Failed - ${error}`);
@@ -160,7 +148,7 @@ const Department = () => {
       .then((res) => res.json())
       .then((data) => {
         alert(data);
-        // refreshList();
+        refreshData();
       },
       (err) => { alert(`Error:\n` + err); }
       );
@@ -178,7 +166,7 @@ const Department = () => {
         .then((res) => res.json())
         .then((data) => {
           alert(data);
-          // refreshList();
+          refreshData()
         },
         (err) => { alert(`Error:\n` + err); }
         );
@@ -206,7 +194,6 @@ const Department = () => {
                   onChange={() => changeDepartmentIdFilter()}
                   placeholder='Filter'
                 />
-
                 <button
                   type='button'
                   className='btn btn-light'
@@ -223,7 +210,6 @@ const Department = () => {
                     <path d='M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z' />
                   </svg>
                 </button>
-
                 <button
                   type='button'
                   className='btn btn-light'
@@ -250,7 +236,6 @@ const Department = () => {
                   onChange={() => changeDepartmentNameFilter()}
                   placeholder='Filter'
                 />
-
                 <button
                   type='button'
                   className='btn btn-light'
@@ -267,7 +252,6 @@ const Department = () => {
                     <path d='M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z' />
                   </svg>
                 </button>
-
                 <button
                   type='button'
                   className='btn btn-light'
@@ -318,7 +302,6 @@ const Department = () => {
                     />
                   </svg>
                 </button>
-
                 <button
                   type='button'
                   className='btn btn-light mr-1'
@@ -340,7 +323,6 @@ const Department = () => {
           ))}
         </tbody>
       </table>
-
       <div
         className='modal fade'
         id='exampleModal'
@@ -358,7 +340,6 @@ const Department = () => {
                 aria-label='Close'
               ></button>
             </div>
-
             <div className='modal-body'>
               <div className='input-group mb-3'>
                 <span className='input-group-text'>DepartmentName</span>
@@ -369,7 +350,6 @@ const Department = () => {
                   onChange={() => changeDepartmentName()}
                 />
               </div>
-
               {DepartmentId == 0 ? (
                 <button
                   type='button'
@@ -379,7 +359,6 @@ const Department = () => {
                   Create
                 </button>
               ) : null}
-
               {DepartmentId != 0 ? (
                 <button
                   type='button'

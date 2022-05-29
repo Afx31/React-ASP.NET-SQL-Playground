@@ -16,6 +16,10 @@ const Employee = () => {
 
   const { departments, employees, modalTitle, EmployeeId, EmployeeName, Department, DateOfJoining, PhotoFileName, PhotoPath } = formData;
 
+  useEffect(() => {
+    refreshList();
+  }, [])
+
   const refreshList = () => {
     fetch(Variables.API_URL + 'employee')
       .then((res) => res.json())
@@ -36,28 +40,24 @@ const Employee = () => {
       });
   }
 
-  useEffect(() => {
-    refreshList();
-  }, [])
-
   const changeEmployeeName = (e) => {
     setFormData({
       ...formData,
       EmployeeName: e.target.value
     });
-  };
+  }
   const changeDepartment = (e) => {
     setFormData({
       ...formData,
       Department: e.target.value
     });
-  };
+  }
   const changeDateOfJoining = (e) => {
     setFormData({
       ...formData,
       DateOfJoining: e.target.value
     });
-  };
+  }
 
   const addClick = () => {
     setFormData({
@@ -70,6 +70,7 @@ const Employee = () => {
       PhotoFileName: 'anonymous.png',
     });
   }
+
   const editClick = (emp) => {
     setFormData({
       ...formData,
@@ -150,13 +151,12 @@ const Employee = () => {
 
   const imageUpload = (e) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append('file', e.target.files[0], e.target.files[0].name);
+    const tempFormData = new FormData();
+    tempFormData.append('file', e.target.files[0], e.target.files[0].name);
 
     fetch(Variables.API_URL + 'employee/savefile', {
       method: 'POST',
-      body: formData,
+      body: tempFormData,
     })
       .then((res) => res.json())
       .then((data) => {
@@ -165,7 +165,7 @@ const Employee = () => {
           PhotoFileName: data
         })
       });
-  };
+  }
 
   return (
     <div>
@@ -218,7 +218,6 @@ const Employee = () => {
                     />
                   </svg>
                 </button>
-
                 <button
                   type='button'
                   className='btn btn-light mr-1'
@@ -240,7 +239,6 @@ const Employee = () => {
           ))}
         </tbody>
       </table>
-
       <div
         className='modal fade'
         id='exampleModal'
@@ -258,7 +256,6 @@ const Employee = () => {
                 aria-label='Close'
               ></button>
             </div>
-
             <div className='modal-body'>
               <div className='d-flex flex-row bd-highlight mb-3'>
                 <div className='p-2 w-50 bd-highlight'>
@@ -268,15 +265,14 @@ const Employee = () => {
                       type='text'
                       className='form-control'
                       value={EmployeeName}
-                      onChange={() => changeEmployeeName()}
+                      onChange={(e) => changeEmployeeName(e)}
                     />
                   </div>
-
                   <div className='input-group mb-3'>
                     <span className='input-group-text'>Department</span>
                     <select
                       className='form-select'
-                      onChange={() => changeDepartment()}
+                      onChange={(e) => changeDepartment(e)}
                       value={Department}
                     >
                       {departments.map((dep) => (
@@ -286,14 +282,13 @@ const Employee = () => {
                       ))}
                     </select>
                   </div>
-
                   <div className='input-group mb-3'>
                     <span className='input-group-text'>DOJ</span>
                     <input
                       type='date'
                       className='form-control'
                       value={DateOfJoining}
-                      onChange={() => changeDateOfJoining()}
+                      onChange={(e) => changeDateOfJoining(e)}
                     />
                   </div>
                 </div>
@@ -301,16 +296,16 @@ const Employee = () => {
                   <img
                     width='250px'
                     height='250px'
+                    alt={PhotoFileName}
                     src={PhotoPath + PhotoFileName}
                   />
                   <input
                     className='m-2'
                     type='file'
-                    onChange={() => imageUpload()}
+                    onChange={(e) => imageUpload(e)}
                   />
                 </div>
               </div>
-
               {EmployeeId === 0 ? (
                 <button
                   type='button'
@@ -320,7 +315,6 @@ const Employee = () => {
                   Create
                 </button>
               ) : null}
-
               {EmployeeId !== 0 ? (
                 <button
                   type='button'

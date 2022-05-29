@@ -8,29 +8,16 @@ const CarPart = () => {
     PartId: 0,
     PartName: '',
     CarModel: '',
-    PhotoFormData: new FormData(),
-    PhotoFilePath: '',
+    PhotoFileName: '',
   });
   const [PhotoDirectoryPath] = useState(Variables.PHOTO_URL);
 
-  const { parts, modalTitle, PartId, PartName, CarModel, PhotoFormData, PhotoFilePath } = formData;
+  const { parts, modalTitle, PartId, PartName, CarModel, PhotoFileName } = formData;
 
   useEffect(() => {
-    // async function refreshData() {
-    //   fetch(Variables.API_URL + 'carpart')
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //       setFormData({
-    //         ...formData,
-    //         parts: data
-    //       });
-    //     },
-    //     (err) => { alert(`Error: ` + err); }
-    //     );
-    // }
     refreshData();
   }, [])
-  
+
   const refreshData = () => {
     fetch(Variables.API_URL + 'carpart')
       .then((res) => res.json())
@@ -49,14 +36,14 @@ const CarPart = () => {
       ...formData,
       PartName: e.target.value
     })
-  };
+  }
 
   const changeCarModel = (e) => { 
     setFormData({
       ...formData,
       CarModel: e.target.value
     })
-  };
+  }
 
   const addClick = () => {
     setFormData({
@@ -65,8 +52,7 @@ const CarPart = () => {
       PartId: 0,
       PartName: '',
       CarModel: '',
-      PhotoFormData: new FormData(),
-      PhotoFilePath: '',
+      PhotoFileName: ''
     });
   }
   
@@ -77,29 +63,12 @@ const CarPart = () => {
       PartId: part.PartId,
       PartName: part.PartName,
       CarModel: part.CarModel,
-      PhotoFilePath: part.PhotoFilePath,
+      PhotoFileName: part.PhotoFileName
     });
   }
 
   const createClick = () => {
-    // Store the image in the file system
-    fetch(Variables.API_URL + 'carpart/savephoto', {
-      method: 'POST',
-      body: PhotoFormData,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setFormData({
-          ...formData,
-          PhotoFilePath: data
-        });
-      });
-
-
-      console.log('---- test ----')
-      console.log(PhotoFilePath)
-
-    // Create the Employee object
+    // Create the CarPart object
     fetch(Variables.API_URL + 'carpart', {
       method: 'POST',
       headers: {
@@ -109,13 +78,13 @@ const CarPart = () => {
       body: JSON.stringify({
         PartName: PartName,
         CarModel: CarModel,
-        PhotoFilePath: PhotoFilePath,
+        PhotoFilePath: PhotoFileName,
       }),
     })
       .then((res) => res.json())
       .then((data) => {
         alert(data);
-        // refreshList();
+        refreshData();
       },
       (err) => { alert(`Error:\n` + err); }
       );
@@ -126,10 +95,18 @@ const CarPart = () => {
     const tempData = new FormData();
     tempData.append('file', e.target.files[0], e.target.files[0].name)
 
-    setFormData({
-      ...formData,
-      PhotoFormData: tempData
+    // Store the image in the file system
+    fetch(Variables.API_URL + 'carpart/savephoto', {
+      method: 'POST',
+      body: tempData,
     })
+      .then((res) => res.json())
+      .then((data) => {
+        setFormData({
+          ...formData,
+          PhotoFileName: data
+        });
+      });
   }
 
   const updateClick = () => {
@@ -143,13 +120,13 @@ const CarPart = () => {
         PartId: PartId,
         PartName: PartName,
         CarModel: CarModel,
-        PhotoFilePath: PhotoFilePath,
+        PhotoFileName: PhotoFileName,
       }),
     })
       .then((res) => res.json())
       .then((data) => {
         alert(data);
-        // refreshList();
+        refreshData();
       },
       (err) => { alert(`Error: ` + err); }
       );
@@ -167,7 +144,7 @@ const CarPart = () => {
         .then((res) => res.json())
         .then((data) => {
           alert(data);
-          // refreshList();
+          refreshData();
         },
         (err) => { alert(`Error:\n` + err); }
         );
@@ -222,7 +199,6 @@ const CarPart = () => {
                     />
                   </svg>
                 </button>
-
                 <button
                   type='button'
                   className='btn btn-light mr-1'
@@ -244,7 +220,6 @@ const CarPart = () => {
           ))}
         </tbody>
       </table>
-
       {parts.map((part) => (
         <img
           key={part.PartId}
@@ -253,8 +228,6 @@ const CarPart = () => {
           src={PhotoDirectoryPath + part.PhotoFilePath}
         />
       ))}
-      
-
       <div
         className='modal fade'
         id='exampleModal'
@@ -285,7 +258,7 @@ const CarPart = () => {
                     />
                   </div>
                   <div className='input-group mb-3'>
-                    <span className='input-group-text'>CarModel</span>
+                    <span className='input-group-text'>Car Model</span>
                     <input
                       type='text'
                       className='form-control'
@@ -298,7 +271,7 @@ const CarPart = () => {
                   <img
                     width='250px'
                     height='250px'
-                    src={PhotoDirectoryPath + PhotoFilePath}
+                    src={PhotoDirectoryPath + PhotoFileName}
                   />
                   <input
                     className='m-2'
@@ -316,7 +289,6 @@ const CarPart = () => {
                   Create
                 </button>
               ) : null}
-
               {PartId !== 0 ? (
                 <button
                   type='button'

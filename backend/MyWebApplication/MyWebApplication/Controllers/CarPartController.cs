@@ -53,6 +53,28 @@ namespace MyWebApplication.Controllers
             }
         }
 
+        [Route("SavePhoto")]
+        [HttpPost]
+        public JsonResult SavePhoto()
+        {
+            try
+            {
+                var httpRequest = Request.Form;
+                var postedFile = httpRequest.Files[0];
+                string filename = postedFile.FileName;
+                var physicalPath = _webHostEnv.ContentRootPath + "/Photos/" + filename;
+
+                using (var stream = new FileStream(physicalPath, FileMode.Create))
+                    postedFile.CopyTo(stream);
+
+                return new JsonResult(filename);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult("Error: " + ex.Message);
+            }
+        }
+
         [HttpPost]
         public JsonResult Post(CarPart part)
         {
@@ -85,28 +107,6 @@ namespace MyWebApplication.Controllers
                 }
 
                 return new JsonResult("Added successfully");
-            }
-            catch (Exception ex)
-            {
-                return new JsonResult("Error: " + ex.Message);
-            }
-        }
-
-        [Route("SavePhoto")]
-        [HttpPost]
-        public JsonResult SavePhoto()
-        {
-            try
-            {
-                var httpRequest = Request.Form;
-                var postedFile = httpRequest.Files[0];
-                string filename = postedFile.FileName;
-                var physicalPath = _webHostEnv.ContentRootPath + "/Photos/" + filename;
-
-                using (var stream = new FileStream(physicalPath, FileMode.Create))
-                    postedFile.CopyTo(stream);
-
-                return new JsonResult(filename);
             }
             catch (Exception ex)
             {
